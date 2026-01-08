@@ -9,8 +9,23 @@ namespace PlatformService.Extensions;
 
 internal static class ServiceCollectionExtensions
 {
-    internal static void RegisterContext(this IServiceCollection services)
+    
+    internal static void RegisterDbContext(this IServiceCollection services, IWebHostEnvironment environment, IConfiguration configuration)
     {
+        if (environment.IsProduction())
+            services.RegisterSqlContext(configuration);
+        else
+            services.RegisterInMemoryContext();
+    }
+    private static void RegisterSqlContext(this IServiceCollection services, IConfiguration configuration)
+    {
+        System.Console.WriteLine("-> Using Sql Server Context");
+        services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(configuration.GetConnectionString("PlatformsCon")));
+        
+    }
+    private static void RegisterInMemoryContext(this IServiceCollection services)
+    {
+        System.Console.WriteLine("-> Using In Memory Context");
         services.AddDbContext<AppDbContext>(opt => opt.UseInMemoryDatabase("InMem"));
     }
     internal static void RegisterRepositories(this IServiceCollection services)

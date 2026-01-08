@@ -10,7 +10,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.RegisterContext();
+builder.Services.RegisterDbContext(builder.Environment, builder.Configuration);
 builder.Services.RegisterRepositories();
 builder.Services.RegisterAutoMapper();
 builder.Services.RegisterHttpClients();
@@ -23,15 +23,10 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
-else
-{
-    app.UseHttpsRedirection();
-}
-
 
 app.MapControllers();
 
-app.SeedData();
+app.SeedData(app.Environment.IsProduction());
 
 app.Run();
 

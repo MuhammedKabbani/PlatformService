@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using PlatformService.Data;
 using PlatformService.Data.Repositories.Abstract;
 using PlatformService.Data.Repositories.Concrate;
+using PlatformService.SyncDataServices;
+using PlatformService.SyncDataServices.Http;
 namespace PlatformService.Extensions;
 
 
@@ -18,5 +20,9 @@ internal static class ServiceCollectionExtensions
     internal static void RegisterAutoMapper(this IServiceCollection services)
     {
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+    }
+    internal static void RegisterHttpClients(this IServiceCollection services)
+    {
+        services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
     }
 }

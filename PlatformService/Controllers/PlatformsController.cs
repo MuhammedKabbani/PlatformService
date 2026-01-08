@@ -6,18 +6,22 @@ using Microsoft.AspNetCore.Mvc;
 using PlatformService.Data.Repositories.Abstract;
 using PlatformService.Dtos;
 using PlatformService.Models;
+using PlatformService.SyncDataServices;
+
 [ApiController]
 [Route("api/[controller]")]
 public class PlatformsController : ControllerBase
 {
     private readonly IPlatformRepository _repository;
     private readonly IMapper _mapper;
-    public PlatformsController(IPlatformRepository repository, IMapper mapper)
+    private readonly ICommandDataClient _commandDataClient;
+    public PlatformsController(IPlatformRepository repository, IMapper mapper, ICommandDataClient commandDataClient)
     {
         _repository = repository;
         _mapper = mapper;
+        _commandDataClient = commandDataClient;
     }
-    
+
     [HttpGet("get-all")]
     public async Task<ActionResult<IEnumerable<PlatformReadDto>>> GetPlatforms()
     {
@@ -26,7 +30,7 @@ public class PlatformsController : ControllerBase
         return Ok(platformsDto);
     }
 
-    [HttpGet("get-by-id/{id}")]
+    [HttpGet("get-by-id/{id}", Name = nameof(GetPlatformById))]
     public async Task<ActionResult<PlatformReadDto>> GetPlatformById([FromRoute]int id)
     {
         var platform = await _repository.FirstOrDefaultAsync(x => x.Id == id, trackChanges: false);
@@ -39,13 +43,14 @@ public class PlatformsController : ControllerBase
     }
 
     [HttpPost("create")]
-    public async Task<ActionResult<PlatformReadDto>> CreatePlatform(PlatformCreateDto platform)
+    public async Task<ActionResult<PlatformReadDto>> CreatePlatform([FromBody]PlatformCreateDto platform)
     {
         var platformModel = _mapper.Map<Platform>(platform);
         await _repository.AddAsync(platformModel);
         await _repository.SaveAsync();
         var platformReadDto = _mapper.Map<PlatformReadDto>(platformModel);
-        return CreatedAtRoute(nameof(GetPlatformById), new { Id = platformReadDto.Id }, platformReadDto);
+        await _commandDataClient.SendPlatformToCommand(platformReadDto);
+        return CreatedAtRoute(nameof(GetPlatformById), new { id = platformReadDto.Id }, platformReadDto);
     }
     [HttpDelete("delete/{id}")]
     public async Task<IActionResult> Delete(int id)

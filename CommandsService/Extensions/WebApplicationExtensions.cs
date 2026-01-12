@@ -20,7 +20,9 @@ public static class WebApplicationExtensions
         {
             try
             {
+                System.Console.WriteLine($"Migrating database: {retry + 1}");
                 context.Database.Migrate();
+                System.Console.WriteLine($"Migrating successfully");
                 break;
             }
             catch (Exception ex)

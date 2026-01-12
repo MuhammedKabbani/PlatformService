@@ -69,7 +69,7 @@ public class RabbtiMQMessageBusClient : IMessageBusClient
 
         var body = Encoding.UTF8.GetBytes(message);
         await _channel.BasicPublishAsync(exchange: "trigger", routingKey: "", body);
-        _logger.LogInformation($"RabbitMQ message: {message} sent");
+        _logger.LogInformation("RabbitMQ message: {message} sent",message);
     }
     public async Task Dispose()
     {

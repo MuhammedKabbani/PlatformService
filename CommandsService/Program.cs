@@ -1,3 +1,4 @@
+using CommandsService.AsyncDataServices.RabbitMQ;
 using CommandsService.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,8 +14,9 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddOpenApi();
 builder.Services.RegisterDbContext(builder.Environment, builder.Configuration);
 builder.Services.RegisterAutoMapper();
+builder.Services.RegisterEventProccessor();
 builder.Services.RegisterRepositories();
-
+builder.Services.AddHostedService<MessageBusSubscriber>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

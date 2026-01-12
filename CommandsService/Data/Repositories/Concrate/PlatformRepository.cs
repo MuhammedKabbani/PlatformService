@@ -13,8 +13,8 @@ public class PlatformRepository : RepositoryBase<Platform>, IPlatformRepository
     {
         ArgumentNullException.ThrowIfNull(plat);
         
-        var sameCommand = await AnyAsync(p => p.Name.Equals(plat.Name, StringComparison.InvariantCultureIgnoreCase));
-        if (sameCommand)
+        var samePlatform = await AnyAsync(p => p.Name == plat.Name);
+        if (samePlatform)
             return;
         
         await AddAsync(plat);
@@ -29,5 +29,9 @@ public class PlatformRepository : RepositoryBase<Platform>, IPlatformRepository
     public async Task<bool> PlatformExsists(int platformId)
     {
         return await AnyAsync(p => p.Id == platformId);
+    }
+    public async Task<bool> OriginalPlatformExsists(int originalPlatformId)
+    {
+        return await AnyAsync(p => p.OriginalId == originalPlatformId);
     }
 }

@@ -2,12 +2,13 @@ using Microsoft.EntityFrameworkCore;
 using CommandsService.Data;
 using CommandsService.Data.Repositories.Abstract;
 using CommandsService.Data.Repositories.Concrate;
+using CommandsService.EventProcessing;
 namespace CommandsService.Extensions;
 
 
 internal static class ServiceCollectionExtensions
 {
-        internal static void RegisterDbContext(this IServiceCollection services, IWebHostEnvironment environment, IConfiguration configuration)
+    internal static void RegisterDbContext(this IServiceCollection services, IWebHostEnvironment environment, IConfiguration configuration)
     {
         if (environment.IsProduction())
             services.RegisterSqlContext(configuration);
@@ -34,4 +35,8 @@ internal static class ServiceCollectionExtensions
     {
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     }
+    internal static void RegisterEventProccessor(this IServiceCollection services)
+    {
+        services.AddSingleton<IEventProcessor, PlatformAddingEventProcessor>();
+    } 
 }

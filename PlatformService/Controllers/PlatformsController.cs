@@ -3,6 +3,7 @@ namespace PlatformService.Controllers;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using PlatformService.ASyncDataServices;
 using PlatformService.Data.Repositories.Abstract;
 using PlatformService.Dtos;
 using PlatformService.Models;
@@ -15,11 +16,13 @@ public class PlatformsController : ControllerBase
     private readonly IPlatformRepository _repository;
     private readonly IMapper _mapper;
     private readonly ICommandDataClient _commandDataClient;
-    public PlatformsController(IPlatformRepository repository, IMapper mapper, ICommandDataClient commandDataClient)
+    private readonly IMessageBusClient _messageBusClient;
+    public PlatformsController(IPlatformRepository repository, IMapper mapper, ICommandDataClient commandDataClient, IMessageBusClient messageBusClient)
     {
         _repository = repository;
         _mapper = mapper;
         _commandDataClient = commandDataClient;
+        _messageBusClient = messageBusClient;
     }
 
     [HttpGet("get-all")]
@@ -50,6 +53,16 @@ public class PlatformsController : ControllerBase
         await _repository.SaveAsync();
         var platformReadDto = _mapper.Map<PlatformReadDto>(platformModel);
         await _commandDataClient.SendPlatformToCommand(platformReadDto);
+        try
+        {
+            var publishedDto = _mapper.Map<PlatformPublishedDto>(platformReadDto);
+            publishedDto.Event = "Platform_Published";
+            await _messageBusClient.PublishToPlatformAsync(publishedDto);
+        }
+        catch (System.Exception ex)
+        {
+            System.Console.WriteLine($"--> Error during send async message {ex.Message}");
+        }
         return CreatedAtRoute(nameof(GetPlatformById), new { id = platformReadDto.Id }, platformReadDto);
     }
     [HttpDelete("delete/{id}")]

@@ -14,6 +14,7 @@ builder.Services.RegisterDbContext(builder.Environment, builder.Configuration);
 builder.Services.RegisterRepositories();
 builder.Services.RegisterAutoMapper();
 builder.Services.RegisterHttpClients();
+builder.Services.RegisterAsynClients();
 
 var app = builder.Build();
 

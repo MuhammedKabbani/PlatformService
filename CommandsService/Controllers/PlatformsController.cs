@@ -25,4 +25,10 @@ public class PlatformsController : ControllerBase
 
         return Ok(mappedPlatforms);
     }
+    [HttpPost]
+    public ActionResult Test()
+    {
+        System.Console.WriteLine("--> sync message recived");
+        return Ok();
+    }
 }

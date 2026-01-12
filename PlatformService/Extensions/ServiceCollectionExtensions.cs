@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using PlatformService.ASyncDataServices;
+using PlatformService.ASyncDataServices.RabbitMQ;
 using PlatformService.Data;
 using PlatformService.Data.Repositories.Abstract;
 using PlatformService.Data.Repositories.Concrate;
@@ -39,5 +41,9 @@ internal static class ServiceCollectionExtensions
     internal static void RegisterHttpClients(this IServiceCollection services)
     {
         services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
+    }
+    internal static void RegisterAsynClients(this IServiceCollection services)
+    {
+        services.AddSingleton<IMessageBusClient, RabbtiMQMessageBusClient>();
     }
 }

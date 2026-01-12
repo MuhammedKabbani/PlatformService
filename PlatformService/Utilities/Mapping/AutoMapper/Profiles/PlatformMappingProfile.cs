@@ -11,5 +11,6 @@ internal class PlatformMappingProfile : Profile
     {
             CreateMap<Platform, PlatformCreateDto>().ReverseMap();
             CreateMap<Platform, PlatformReadDto>().ReverseMap();
+            CreateMap<PlatformReadDto, PlatformPublishedDto>();
     }
 }

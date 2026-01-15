@@ -46,4 +46,8 @@ internal static class ServiceCollectionExtensions
     {
         services.AddSingleton<IMessageBusClient, RabbtiMQMessageBusClient>();
     }
+    internal static void RegisterGrpcServices(this IServiceCollection services)
+    {
+        services.AddGrpc();
+    }
 }

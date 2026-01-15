@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PlatformService.Extensions;
+using PlatformService.SyncDataServices.Grpc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,14 +16,20 @@ builder.Services.RegisterRepositories();
 builder.Services.RegisterAutoMapper();
 builder.Services.RegisterHttpClients();
 builder.Services.RegisterAsynClients();
-
+builder.Services.RegisterGrpcServices();
 var app = builder.Build();
 
+app.MapGrpcService<GrpcPlatformService>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapGet("/protos/platforms.proto", async context =>
+    {
+        await context.Response.WriteAsync(await System.IO.File.ReadAllTextAsync("Protos/platforms.proto"));
+    });
+    app.UseHttpsRedirection();
 }
 
 app.MapControllers();

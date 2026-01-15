@@ -52,9 +52,9 @@ public class PlatformsController : ControllerBase
         await _repository.AddAsync(platformModel);
         await _repository.SaveAsync();
         var platformReadDto = _mapper.Map<PlatformReadDto>(platformModel);
-        await _commandDataClient.SendPlatformToCommand(platformReadDto);
         try
         {
+            await _commandDataClient.SendPlatformToCommand(platformReadDto);
             var publishedDto = _mapper.Map<PlatformPublishedDto>(platformReadDto);
             publishedDto.Event = "Platform_Published";
             await _messageBusClient.PublishToPlatformAsync(publishedDto);

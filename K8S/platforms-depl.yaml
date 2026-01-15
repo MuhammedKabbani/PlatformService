@@ -27,5 +27,9 @@ spec:
   ports:
     - name: platformservice
       protocol: TCP
-      port: 80
+      port: 80 
       targetPort: 8080
+    - name: platformgrpc
+      protocol: TCP
+      port: 789
+      targetPort: 789

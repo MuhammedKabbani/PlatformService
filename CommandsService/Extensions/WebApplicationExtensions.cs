@@ -1,4 +1,6 @@
 using CommandsService.Data;
+using CommandsService.Data.Repositories.Abstract;
+using CommandsService.SyncDataServices.Grpc;
 using Microsoft.EntityFrameworkCore;
 namespace CommandsService.Extensions;
 public static class WebApplicationExtensions
@@ -32,5 +34,19 @@ public static class WebApplicationExtensions
                 Thread.Sleep(5000);
             }
         }
+    }
+    internal static async Task SeedDataAsync(this IApplicationBuilder app)
+    {
+        await using (var serviceScope = app.ApplicationServices.CreateAsyncScope())
+        {
+            var grpcClient = serviceScope.ServiceProvider.GetService<IPlatformDataClient>();
+            
+            if (grpcClient == null)
+                return;
+
+            var platforms = await grpcClient.ReturnAllPlatforms();
+
+            await PrepDb.AddData(platforms, serviceScope.ServiceProvider.GetService<IPlatformRepository>());
+        }   
     }
 }

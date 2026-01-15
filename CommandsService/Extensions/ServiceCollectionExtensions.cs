@@ -3,6 +3,7 @@ using CommandsService.Data;
 using CommandsService.Data.Repositories.Abstract;
 using CommandsService.Data.Repositories.Concrate;
 using CommandsService.EventProcessing;
+using CommandsService.SyncDataServices.Grpc;
 namespace CommandsService.Extensions;
 
 
@@ -38,5 +39,9 @@ internal static class ServiceCollectionExtensions
     internal static void RegisterEventProccessor(this IServiceCollection services)
     {
         services.AddSingleton<IEventProcessor, PlatformAddingEventProcessor>();
+    } 
+    internal static void RegisterGrpcClient(this IServiceCollection services)
+    {
+        services.AddScoped<IPlatformDataClient, GrpcPlatformDataClient>();
     } 
 }

@@ -414,7 +414,13 @@ dotnet ef migrations remove
 - Check message queue configuration
 - Ensure subscriber is running before publishing
 
-## 📄 License
+## � Acknowledgments
+
+This project is based on the excellent microservices tutorial by **Les Jackson**. Special thanks for the comprehensive and clear guidance on building distributed systems with .NET, Docker, and Kubernetes.
+
+**Tutorial Video**: [.NET Microservices – Full Course](https://www.youtube.com/watch?v=DgVjEo3OGBI&pp=2Ab9tQI%3D)
+
+## �📄 License
 
 This is a tutorial-based project for educational purposes.
 
